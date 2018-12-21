@@ -1,10 +1,10 @@
 {
-  "name": "xr0m3oz/urlparser",
+  "name": "Parser for Hexa test",
   "description": "Download images at a given address.",
   "version": "1.0.0",
   "autoload": {
     "psr-4": {
-      "xr0m3oz\\urlparser\\": "src/xr0m3oz/urlparser"
+      "xr0m3oz\\urlparser\\": "src/urlparser"
     }
   }
 }
