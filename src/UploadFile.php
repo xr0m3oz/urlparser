@@ -6,19 +6,20 @@ namespace xr0m3oz\urlparser;
 class UploadFile
 {
     protected $url;
-    protected $format = ['jpg','png','gif'];
+    protected $format = ['image/jpeg','image/png','image/gif'];
     protected $path;
 
-    public function __construct($urlToImg,$savePath='/uploads')
+    public function __construct($savePath='/uploads')
     {
-        $this->url = $urlToImg;
         $this->path = $savePath;
-        $this->check();
     }
 
-    public function upload(){
+    public function upload($urlToImg){
+        $this->url = $urlToImg;
+        $this->check();
+
         $imgData = getimagesize($this->url);
-        if(!in_array($imgData[2],$this->format))
+        if(!in_array($imgData['mime'],$this->format))
             throw new \Exception('Недопустимый формат файла');
 
         $img = file_get_contents($this->url);
