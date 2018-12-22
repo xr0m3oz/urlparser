@@ -14,9 +14,13 @@ class UploadFile
     protected $path;
     protected $imageType;
 
-    public function __construct($savePath = '/uploads')
+    /**
+     * UploadFile constructor.
+     * @param $savePath (example __DIR__.'/uploads')
+     */
+    public function __construct(string $savePath)
     {
-        $this->path = __DIR__ . '/../../../../' . $savePath;
+        $this->path = $savePath;
     }
 
     /**
@@ -24,11 +28,20 @@ class UploadFile
      * @return bool|int
      * @throws \Exception
      */
-    public function upload($urlToImg)
+    public function upload(string $urlToImg) : bool
     {
         $this->url = $urlToImg;
+
+        if (!filter_var($this->url, FILTER_VALIDATE_URL)) {
+            throw new \Exception('Строка не Url');
+        }
+
+        if (empty($this->path)) {
+            throw new \Exception('Нужно указать путь');
+        }
+
         $this->updateImageType();
-        $this->check();
+
         return $this->saveImage();
     }
 
@@ -36,7 +49,7 @@ class UploadFile
      * @return bool
      * @throws \Exception
      */
-    protected function saveImage(){
+    protected function saveImage(): bool {
         $img = file_get_contents($this->url);
 
         if ($img === false) {
@@ -60,29 +73,10 @@ class UploadFile
         $imgData = getimagesize($this->url);
         $this->imageType = explode('/', $imgData['mime'])[1];
 
-        return $this->imageType;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function check()
-    {
-        if (!is_string($this->url)) {
-            throw new \Exception('Адрес должен быть строкой');
-        }
-
-        if (!filter_var($this->url, FILTER_VALIDATE_URL)) {
-            throw new \Exception('Строка не Url');
-        }
-
-        if (!is_string($this->path)) {
-            throw new \Exception('Путь должен быть строкой');
-        }
-
         if (!in_array('image/' . $this->imageType, $this->format)) {
             throw new \Exception('Недопустимый формат файла');
         }
-    }
 
+        return $this->imageType;
+    }
 }
